@@ -1,0 +1,57 @@
+frameworkVersion: '>=1.28.0 <2.0.0'
+
+service: serverless-eventbus
+
+provider:
+  name: aws
+  runtime: go1.x
+
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+functions:
+  EventsCreate:
+    handler: create
+    events:
+      - http:
+          path: /events
+          method: post
+    package:
+      artifact: bin/events/create.zip
+    environment:
+      AUTHENTICATION_TOKEN: ${ssm:authentication}
+      DATABASE_USER: ${ssm:database_user}
+      DATABASE_PASSWORD: ${ssm:database_password}
+      DATABASE_HOST: ${ssm:database_host}
+      DATABASE_NAME: ${ssm:database_name}
+  SubscriptionsCreate:
+    handler: create
+    events:
+      - http:
+          path: /subscriptions
+          method: post
+    package:
+      artifact: bin/subscriptions/create.zip
+    environment:
+      AUTHENTICATION_TOKEN: ${ssm:authentication}
+      DATABASE_USER: ${ssm:database_user}
+      DATABASE_PASSWORD: ${ssm:database_password}
+      DATABASE_HOST: ${ssm:database_host}
+      DATABASE_NAME: ${ssm:database_name}
+  SubscriptionsDelete:
+    handler: delete
+    events:
+      - http:
+          path: /subscriptions/{id}
+          method: delete
+    package:
+      artifact: bin/subscriptions/delete.zip
+    environment:
+      AUTHENTICATION_TOKEN: ${ssm:authentication}
+      DATABASE_USER: ${ssm:database_user}
+      DATABASE_PASSWORD: ${ssm:database_password}
+      DATABASE_HOST: ${ssm:database_host}
+      DATABASE_NAME: ${ssm:database_name}
